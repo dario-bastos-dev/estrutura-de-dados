@@ -11,7 +11,7 @@
 /* Função para exibir o menu principal */
 void exibir_menu() {
     printf("\n========================================\n");
-    printf("   SISTEMA DE VENDAS - cJSON Edition\n");
+    printf("   SISTEMA DE VENDAS\n");
     printf("========================================\n");
     printf("1. Carregar Produtos do JSON\n");
     printf("2. Cadastrar Cliente\n");
@@ -46,7 +46,6 @@ int main() {
     
     printf("\n========================================\n");
     printf("  BEM-VINDO AO SISTEMA DE VENDAS!\n");
-    printf("  Usando biblioteca cJSON para JSON\n");
     printf("========================================\n");
     pausar();
     
