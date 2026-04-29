@@ -1,5 +1,5 @@
-#ifndef FILA_H
-#define FILA_H
+#ifndef BANCO_H
+#define BANCO_H
 #include <time.h>
 
 typedef struct Cliente {
@@ -10,6 +10,7 @@ typedef struct Cliente {
 typedef struct Fila {
     Cliente *inicio;
     Cliente *fim;
+    int total;
 } Fila;
 
 typedef struct TempoAtendimento {

@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 #include "banco.h"
 
 Fila *CriarFila() {
@@ -10,9 +11,12 @@ Fila *CriarFila() {
         return NULL;
     }
 
-    printf("Fila iniciada!\n");
     fi->inicio = NULL;
     fi->fim = NULL;
+    fi->total = 0;
+
+    printf("Fila iniciada!\n");
+
     return fi;
 }
 
@@ -31,6 +35,7 @@ void InserirCliente(Fila **fi, TempoAtendimento **temp) {
     scanf("%d", &novo->id);
     novo->prox = NULL;
 
+    // Adcionando novo cliente na fila
     if ((*fi)->inicio == NULL) {
         (*fi)->inicio = novo;
         (*fi)->fim = novo;
@@ -38,10 +43,12 @@ void InserirCliente(Fila **fi, TempoAtendimento **temp) {
         (*fi)->fim->prox = novo;
         (*fi)->fim = novo;
     }
+    (*fi)->total++; // Incrementando contador
+
     // Salvando inicio do atendimento
     if ((*temp)->inicio == NULL) {
         (*temp)->inicio = (time_t *)malloc(sizeof(time_t));
-        (*temp)->inicio = agora;
+        (*temp)->inicio[0] = agora;
         (*temp)->numb = 0;
     } else {
         (*temp)->numb++;
@@ -54,36 +61,40 @@ void InserirCliente(Fila **fi, TempoAtendimento **temp) {
     printf("\nAperte qualquer tecla para voltar\n");
 
     getchar();
+    getchar();
 
 }
 
 void ExibirFila(Fila *fi, TempoAtendimento *temp) {
-     if (fi->inicio == NULL) {
+     if (fi->inicio != NULL) {
         printf("Fila vazia!\n");
-        return;
+        
+        // Exibir clientes restantes
+        Cliente *cliente = fi->inicio;
+        do
+        {
+            printf("Id do cliente: %d\n", cliente->id);
+            cliente = cliente->prox;
+        } while (cliente != NULL);
     }
-    // Exibir clientes restantes
-    Cliente *cliente = fi->inicio;
-    do
-    {
-        printf("\nId do cliente: %d\n", cliente->id);
-        cliente = cliente->prox;
-    } while (cliente != NULL);
 
     // Exibir tempo médio de atendimento
     int horas = (int)temp->media / 3600;
     int minutos = ((int)temp->media % 3600) / 60;
     int segundos = (int)temp->media % 60;
 
-    printf("Tempo médio: %02d:%02d:%02d\n", horas, minutos, segundos);
+    printf("\nTempo médio: %02d:%02d:%02d\n", horas, minutos, segundos);
 
     printf("\nAperte qualquer tecla para voltar\n");
     
+    getchar();
     getchar();
 
 }
 
 void RemoverCliente(Fila **fi, TempoAtendimento **temp) {
+    static int atendidos = 0;
+
     time_t agora;
     time(&agora);
 
@@ -92,21 +103,28 @@ void RemoverCliente(Fila **fi, TempoAtendimento **temp) {
         return;
     }
     // Salvar o tempo de finalização de atendimento
-    (*temp)->fim = (time_t *)realloc((*temp)->fim, sizeof(time_t) * (*temp)->numb);
-    (*temp)->fim[(*temp)->numb] = agora;
+    if ((*temp)->fim == NULL) {
+        (*temp)->fim = (time_t *)malloc(sizeof(time_t));
+        (*temp)->fim[atendidos] = agora;
+    } else {
+        (*temp)->fim = (time_t *)realloc((*temp)->fim, sizeof(time_t) * (*temp)->numb);
+        (*temp)->fim[atendidos] = agora;
+    }
 
     // Calculando tempo médio do atendimento
     double mediaTotal = 0;
-    for (int i = 0; i <= (*temp)->numb; i++) {
-        mediaTotal += difftime((*temp)->inicio[i], (*temp)->fim[i]);
+    for (int i = 0; i <= atendidos; i++) {
+        mediaTotal += difftime((*temp)->fim[i], (*temp)->inicio[i]);
     }
-    (*temp)->media = mediaTotal / (*temp)->numb + 1;
+    (*temp)->media = mediaTotal / (atendidos + 1);
 
     // removendo cliente
     printf("\nCliente removido: %d\n", (*fi)->inicio->id);
-    Cliente *temp = (*fi)->inicio;
+
+    Cliente *removeClient = (*fi)->inicio;
     (*fi)->inicio = (*fi)->inicio->prox;
-    free(temp); 
+    free(removeClient); 
+    (*fi)->total--; // Decrementando contador
     
     if ((*fi)->inicio == NULL) {
         (*fi)->fim = NULL;
@@ -115,5 +133,6 @@ void RemoverCliente(Fila **fi, TempoAtendimento **temp) {
 
     printf("\nAperte qualquer tecla para voltar\n");
 
+    getchar();
     getchar();
 }
