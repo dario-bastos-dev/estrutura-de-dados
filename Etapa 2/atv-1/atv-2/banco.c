@@ -61,7 +61,6 @@ void InserirCliente(Fila **fi, TempoAtendimento **temp) {
     printf("\nAperte qualquer tecla para voltar\n");
 
     getchar();
-    getchar();
 
 }
 
@@ -87,7 +86,6 @@ void ExibirFila(Fila *fi, TempoAtendimento *temp) {
 
     printf("\nAperte qualquer tecla para voltar\n");
     
-    getchar();
     getchar();
 
 }
@@ -131,8 +129,9 @@ void RemoverCliente(Fila **fi, TempoAtendimento **temp) {
         printf("\nFila terminou.\n");
     }
 
+    atendidos++;
+
     printf("\nAperte qualquer tecla para voltar\n");
 
-    getchar();
     getchar();
 }
